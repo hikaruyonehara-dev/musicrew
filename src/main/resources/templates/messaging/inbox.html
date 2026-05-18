@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: base(title='Messages', content=~{::section})}">
+
+<body>
+    <section>
+        <h1 class="text-3xl font-semibold tracking-tight mb-6">Messages</h1>
+
+        <div th:if="${#lists.isEmpty(conversations)}" class="text-neutral-500 text-center py-12">
+            You have no conversations yet.
+            <a th:href="@{/search}" class="text-blue-400 hover:text-blue-300 transition">Find someone</a>
+            to start one.
+        </div>
+
+        <ul class="space-y-2" th:unless="${#lists.isEmpty(conversations)}">
+            <li th:each="c : ${conversations}">
+                <a th:href="@{'/messages/' + ${c.id}}"
+                    class="flex items-center justify-between bg-neutral-900 border border-neutral-800 hover:border-neutral-700 rounded-xl p-4 transition">
+                    <div class="flex-1 min-w-0">
+                        <div class="font-medium" th:text="${displayNames[c.id]}">Display name</div>
+                        <div class="text-sm text-neutral-500"
+                            th:text="${T(co.sponto.musicrew.util.RelativeTime).format(lastTimes[c.id])}">
+                            2h
+                        </div>
+                    </div>
+                    <span th:if="${unreadCounts[c.id] > 0}"
+                        class="bg-white text-black text-xs px-2 py-0.5 rounded-full font-medium ml-3"
+                        th:text="${unreadCounts[c.id]}"></span>
+                </a>
+            </li>
+        </ul>
+    </section>
+</body>
+
+</html>

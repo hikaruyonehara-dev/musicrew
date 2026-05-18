@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: base(title='Find musicians', content=~{::section})}">
+
+<body>
+    <section>
+        <h1 class="text-3xl font-semibold tracking-tight mb-6">Find musicians</h1>
+
+        <form method="get" th:action="@{/search}" class="bg-neutral-900 border border-neutral-800 rounded-xl p-6 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+
+                <!-- instrument block -->
+                <details class="bg-neutral-950 border border-neutral-800 rounded-lg group">
+                    <summary
+                        class="cursor-pointer list-none px-4 py-3 text-sm flex items-center justify-between hover:bg-neutral-900 rounded-lg transition">
+                        <span>
+                            <span class="text-neutral-400">Instruments</span>
+                            <span class="text-neutral-500 ml-1" th:if="${!selectedInstruments.isEmpty()}"
+                                th:text="'(' + ${selectedInstruments.size()} + ')'"></span>
+                        </span>
+                        <span class="text-neutral-500 transition-transform group-open:rotate-180">▼</span>
+                    </summary>
+                    <div class="grid grid-cols-2 gap-2 px-4 pb-4 pt-2 border-t border-neutral-800">
+                        <label th:each="i : ${allInstruments}" class="flex items-center gap-2 text-sm">
+                            <input type="checkbox" name="instrumentIds" th:value="${i.id}"
+                                th:checked="${selectedInstruments.contains(i.id)}"
+                                class="rounded border-neutral-700 bg-neutral-900" />
+                            <span th:text="${i.name}"></span>
+                        </label>
+                    </div>
+                </details>
+
+
+                <!-- genre block -->
+                <details class="bg-neutral-950 border border-neutral-800 rounded-lg group">
+                    <summary
+                        class="cursor-pointer list-none px-4 py-3 text-sm flex items-center justify-between hover:bg-neutral-900 rounded-lg transition">
+                        <span>
+                            <span class="text-neutral-400">Genres</span>
+                            <span class="text-neutral-500 ml-1" th:if="${!selectedGenres.isEmpty()}"
+                                th:text="'(' + ${selectedGenres.size()} + ')'"></span>
+                        </span>
+                        <span class="text-neutral-500 transition-transform group-open:rotate-180">▼</span>
+                    </summary>
+                    <div class="grid grid-cols-2 gap-2 px-4 pb-4 pt-2 border-t border-neutral-800">
+                        <label th:each="g : ${allGenres}" class="flex items-center gap-2 text-sm">
+                            <input type="checkbox" name="genreIds" th:value="${g.id}"
+                                th:checked="${selectedGenres.contains(g.id)}"
+                                class="rounded border-neutral-700 bg-neutral-900" />
+                            <span th:text="${g.name}"></span>
+                        </label>
+                    </div>
+                </details>
+
+
+
+
+                <div>
+                    <label class="block text-sm text-neutral-400 mb-1.5">Country</label>
+                    <select name="country"
+                        class="w-full bg-neutral-950 border border-neutral-800 text-white px-4 py-2.5 rounded-lg focus:outline-none focus:border-neutral-600 transition">
+                        <option value="" class="bg-neutral-900 text-white">Any</option>
+                        <option th:each="c : ${allCountries}" th:value="${c}" th:text="${c}"
+                            th:selected="${selectedCountry == c}" class="bg-neutral-900 text-white"></option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm text-neutral-400 mb-1.5">City</label>
+                    <input type="text" name="city" th:value="${selectedCity}"
+                        class="w-full bg-neutral-950 border border-neutral-800 text-white px-4 py-2.5 rounded-lg focus:outline-none focus:border-neutral-600 transition" />
+                </div>
+            </div>
+
+            <button type="submit"
+                class="bg-white text-black px-5 py-2 rounded-full font-medium hover:bg-neutral-200 transition">
+                Search
+            </button>
+        </form>
+
+        <div th:if="${#lists.isEmpty(results)}" class="text-neutral-500 text-center py-12">
+            No musicians match your filters.
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" th:unless="${#lists.isEmpty(results)}">
+            <a th:each="p : ${results}" th:href="@{'/profile/' + ${p.id}}"
+                class="block bg-neutral-900 border border-neutral-800 hover:border-neutral-700 rounded-xl overflow-hidden transition">
+                <img th:src="${p.profilePicPath}" class="w-full aspect-square object-cover" />
+                <div class="p-4">
+                    <div class="text-lg font-medium mb-1" th:text="${p.displayName}"></div>
+                    <div class="text-sm text-neutral-400 mb-2">
+                        <span th:each="i, iter : ${p.instruments}">
+                            <span th:text="${i.name}"></span><span th:unless="${iter.last}">, </span>
+                        </span>
+                    </div>
+                    <div class="text-sm text-neutral-500">
+                        <span th:if="${p.city != null and p.country != null}"
+                            th:text="${p.city + ', ' + p.country}"></span>
+                        <span th:if="${p.city == null and p.country != null}" th:text="${p.country}"></span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </section>
+</body>
+
+</html>

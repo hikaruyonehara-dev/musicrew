@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: base(title='Home', content=~{::section})}">
+
+<body>
+    <section>
+        <div class="mb-10">
+            <h1 class="text-4xl font-semibold tracking-tight mb-2">Welcome back</h1>
+            <p class="text-neutral-400" th:text="${email}">your@email.com</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <a th:href="@{/profile/me}"
+                class="block bg-neutral-900 border border-neutral-800 hover:border-neutral-700 rounded-xl p-6 transition">
+                <div class="text-lg font-medium mb-1">My profile</div>
+                <p class="text-sm text-neutral-400">Manage your bio, instruments, and videos.</p>
+            </a>
+
+            <a th:href="@{/search}"
+                class="block bg-neutral-900 border border-neutral-800 hover:border-neutral-700 rounded-xl p-6 transition">
+                <div class="text-lg font-medium mb-1">Find musicians</div>
+                <p class="text-sm text-neutral-400">Search by instrument, genre, or location.</p>
+            </a>
+
+            <a th:href="@{/messages}"
+                class="block bg-neutral-900 border border-neutral-800 hover:border-neutral-700 rounded-xl p-6 transition">
+                <div class="text-lg font-medium mb-1">Messages</div>
+                <p class="text-sm text-neutral-400">Your conversations with other musicians.</p>
+            </a>
+        </div>
+    </section>
+</body>
+
+</html>

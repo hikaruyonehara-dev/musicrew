@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+    th:replace="~{layout :: base(title='Home', content=~{::section})}">
+
+<body>
+    <section>
+        <div class="text-center py-24">
+
+            <div class="text-center -mt-40 py-24">
+                <h1 class="text-7xl md:text-8xl font-bold tracking-tight mb-8
+               bg-gradient-to-b from-neutral-300 to-neutral-700 bg-clip-text text-transparent">
+                    Musicrew
+                </h1>
+
+                <p class="text-sm text-neutral-400 mb-4 uppercase tracking-wider">For musicians</p>
+                <h4 class="text-6xl md:text-7xl font-semibold tracking-tight mb-6 leading-tight">
+                    Find bandmates<br>anywhere.
+                </h4>
+                <p class="text-xl text-neutral-400 max-w-xl mx-auto mb-10">
+                    The simplest way to connect with musicians.
+                </p>
+                <div sec:authorize="!isAuthenticated()" class="flex gap-3 justify-center">
+                    <a th:href="@{/signup}"
+                        class="bg-white text-black px-6 py-3 rounded-full font-medium hover:bg-neutral-200 transition">
+                        Get started
+                    </a>
+                    <a th:href="@{/login}"
+                        class="border border-neutral-700 text-white px-6 py-3 rounded-full font-medium hover:bg-neutral-900 transition">
+                        Log in
+                    </a>
+                </div>
+            </div>
+    </section>
+</body>
+
+</html>

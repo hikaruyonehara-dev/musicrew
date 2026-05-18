@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: base(title='Conversation', content=~{::section})}">
+
+<body>
+    <section>
+        <a th:href="@{/messages}" class="text-neutral-400 hover:text-white transition text-sm mb-4 inline-block">
+            ← Inbox
+        </a>
+
+        <a th:href="@{'/profile/' + ${other.id}}" class="flex items-center gap-3 mb-6 group w-fit">
+            <img th:if="${otherProfile.profilePicPath != null}" th:src="${otherProfile.profilePicPath}"
+                alt="profile picture" class="w-10 h-10 rounded-full object-cover border border-neutral-800" />
+            <div th:unless="${otherProfile.profilePicPath != null}"
+                class="w-10 h-10 rounded-full bg-neutral-800 border border-neutral-800 flex items-center justify-center text-xs text-neutral-500">
+                ?
+            </div>
+            <h1 class="text-2xl font-semibold tracking-tight group-hover:text-neutral-300 transition"
+                th:text="${otherProfile.displayName}">
+                Other user
+            </h1>
+        </a>
+
+
+        <div class="flex flex-col gap-2 mb-6 overflow-y-auto" style="max-height: 60vh;">
+            <div th:each="m : ${messages}" th:classappend="${m.sender.id == me.id}
+                              ? 'self-end bg-white text-black'
+                              : 'self-start bg-neutral-900 border border-neutral-800 text-white'"
+                class="px-4 py-2.5 rounded-2xl max-w-md">
+                <div th:text="${m.body}"></div>
+                <div class="text-xs mt-1 opacity-60"
+                    th:text="${T(co.sponto.musicrew.util.RelativeTime).formatTime(m.sentAt)}"></div>
+            </div>
+        </div>
+
+        <!-- send form -->
+        <form th:action="@{'/messages/' + ${conversation.id}}" method="post" class="flex gap-2 items-end">
+            <textarea name="body" required rows="2" placeholder="Type a message…"
+                class="flex-1 bg-neutral-950 border border-neutral-800 text-white px-4 py-2.5 rounded-2xl focus:outline-none focus:border-neutral-600 transition resize-none"></textarea>
+            <button type="submit"
+                class="bg-white text-black px-5 py-2 rounded-full font-medium hover:bg-neutral-200 transition shrink-0">
+                Send
+            </button>
+        </form>
+
+    </section>
+</body>
+
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{layout :: base(title=${profile.displayName}, content=~{::section})}">
+
+<body>
+    <section>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+            <!-- Profile picture column -->
+            <div class="md:col-span-1">
+                <img th:if="${profile.profilePicPath != null}" th:src="${profile.profilePicPath}" alt="profile picture"
+                    class="w-full aspect-square object-cover rounded-2xl border border-neutral-800" />
+                <div th:unless="${profile.profilePicPath != null}"
+                    class="w-full aspect-square bg-neutral-900 border border-neutral-800 rounded-2xl flex items-center justify-center text-neutral-500">
+                    no photo
+                </div>
+            </div>
+
+            <!-- Details column -->
+            <div class="md:col-span-2">
+                <h1 class="text-4xl font-semibold tracking-tight mb-2" th:text="${profile.displayName}">Display name
+                </h1>
+
+                <div class="flex flex-wrap items-center gap-3 mb-6">
+                    <span class="px-3 py-1 rounded-full bg-neutral-800 text-neutral-300 text-sm"
+                        th:text="${profile.skillBadge}">BEGINNER</span>
+                    <span class="text-neutral-400" th:if="${profile.city != null and profile.country != null}"
+                        th:text="${profile.city + ', ' + profile.country}"></span>
+                    <span class="text-neutral-400" th:if="${profile.city == null and profile.country != null}"
+                        th:text="${profile.country}"></span>
+                </div>
+
+                <p class="text-neutral-300 mb-6 leading-relaxed" th:if="${profile.bio != null}"
+                    th:text="${profile.bio}"></p>
+
+                <div class="mb-4">
+                    <h3 class="text-xs uppercase tracking-wider text-neutral-500 mb-2">Instruments</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span th:each="i : ${profile.instruments}"
+                            class="px-3 py-1 rounded-full bg-neutral-900 border border-neutral-800 text-sm"
+                            th:text="${i.name}"></span>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-xs uppercase tracking-wider text-neutral-500 mb-2">Genres</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span th:each="g : ${profile.genres}"
+                            class="px-3 py-1 rounded-full bg-neutral-900 border border-neutral-800 text-sm"
+                            th:text="${g.name}"></span>
+                    </div>
+                </div>
+
+                <div th:if="${!#lists.isEmpty(profile.videoLinks)}" class="mb-6">
+                    <h3 class="text-xs uppercase tracking-wider text-neutral-500 mb-2">Performance videos</h3>
+                    <ul class="space-y-1">
+                        <li th:each="v : ${profile.videoLinks}">
+                            <a th:href="${v.url}" target="_blank" rel="noopener"
+                                class="text-blue-400 hover:text-blue-300 transition" th:text="${v.url}"></a>
+                            <span class="text-neutral-500 text-sm ml-2" th:text="'(' + ${v.platform} + ')'"></span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div th:if="${!#lists.isEmpty(profile.musicLinks)}" class="mb-6">
+                    <h3 class="text-xs uppercase tracking-wider text-neutral-500 mb-2">Music distribution</h3>
+                    <ul class="space-y-1">
+                        <li th:each="m : ${profile.musicLinks}">
+                            <a th:href="${m.url}" target="_blank" rel="noopener"
+                                class="text-blue-400 hover:text-blue-300 transition" th:text="${m.url}"></a>
+                            <span class="text-neutral-500 text-sm ml-2" th:text="'(' + ${m.platform} + ')'"></span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="mt-6">
+                    <a th:if="${isSelf}" th:href="@{/profile/me/edit}"
+                        class="inline-block bg-white text-black px-5 py-2 rounded-full font-medium hover:bg-neutral-200 transition">
+                        Edit profile
+                    </a>
+                    <form th:unless="${isSelf}" th:action="@{'/messages/start/' + ${profile.user.id}}" method="post"
+                        class="inline">
+                        <button type="submit"
+                            class="bg-white text-black px-5 py-2 rounded-full font-medium hover:bg-neutral-200 transition">
+                            Message
+                        </button>
+                    </form>
+                </div>
+
+                <div th:if="${isSelf and (profile.profilePicPath == null or #lists.isEmpty(profile.videoLinks))}"
+                    class="mt-6 px-4 py-3 rounded-lg bg-amber-950 border border-amber-800 text-amber-300 text-sm">
+                    Your profile is hidden from search until you add a profile picture and at least one performance
+                    video.
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

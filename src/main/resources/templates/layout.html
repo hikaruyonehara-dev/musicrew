@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+    th:fragment="base(title, content)">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title th:text="${title} + ' — Musicrew'">Musicrew</title>
+
+    <!-- Inter font (what Resend uses) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind + custom config -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-neutral-950 text-white antialiased min-h-screen font-sans">
+
+    <nav class="border-b border-neutral-900">
+        <div class="max-w-6xl mx-auto px-6 flex justify-between items-center h-16">
+            <a class="font-semibold tracking-tight" th:href="@{/}">Musicrew</a>
+            <ul class="flex space-x-6 items-center text-sm">
+                <li sec:authorize="!isAuthenticated()">
+                    <a class="text-neutral-400 hover:text-white transition" th:href="@{/login}">Log in</a>
+                </li>
+                <li sec:authorize="!isAuthenticated()">
+                    <a class="bg-white text-black px-4 py-1.5 rounded-full font-medium hover:bg-neutral-200 transition"
+                        th:href="@{/signup}">Sign up</a>
+                </li>
+                <li sec:authorize="isAuthenticated()">
+                    <form th:action="@{/logout}" method="post" class="inline">
+                        <button type="submit" class="text-neutral-400 hover:text-white transition">Log out</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-6 py-12">
+        <div th:if="${flash}"
+            class="mb-6 px-4 py-3 rounded-lg bg-emerald-950 border border-emerald-800 text-emerald-300"
+            th:text="${flash}"></div>
+        <div th:if="${error}" class="mb-6 px-4 py-3 rounded-lg bg-red-950 border border-red-800 text-red-300"
+            th:text="${error}"></div>
+        <div th:replace="${content}">content goes here</div>
+    </main>
+
+</body>
+
+</html>
