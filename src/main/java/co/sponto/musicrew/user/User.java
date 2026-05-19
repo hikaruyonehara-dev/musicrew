@@ -36,6 +36,12 @@ public class User {
     @Column(nullable = false)
     private boolean enabled = true;
 
+    @Setter
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @org.hibernate.annotations.ColumnDefault("'USER'")
+    private Role role = Role.USER;
+
     public User(String email, String passwordHash, LocalDate dateOfBirth) {
         this.email = email;
         this.passwordHash = passwordHash;

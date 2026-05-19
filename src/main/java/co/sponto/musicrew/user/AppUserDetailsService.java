@@ -22,11 +22,14 @@ public class AppUserDetailsService implements UserDetailsService {
         User user = userRepository.findByEmail(email.toLowerCase())
                 .orElseThrow(() -> new UsernameNotFoundException("No account for " + email));
 
+        String authority = "ROLE_" + user.getRole().name();
+
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())
                 .password(user.getPasswordHash())
-                .authorities(List.of(new SimpleGrantedAuthority("ROLE_USER")))
+                .authorities(List.of(new SimpleGrantedAuthority(authority)))
                 .disabled(!user.isEnabled())
                 .build();
     }
+
 }

@@ -12,10 +12,16 @@ public final class ProfileSpecs {
     private ProfileSpecs() {
     }
 
+    /**
+     * Only profiles with a pic AND at least one video link AND not hidden AND user
+     * enabled.
+     */
     public static Specification<Profile> isVisible() {
         return (root, query, cb) -> cb.and(
                 cb.isNotNull(root.get("profilePicPath")),
-                cb.greaterThan(cb.size(root.get("videoLinks")), 0));
+                cb.greaterThan(cb.size(root.get("videoLinks")), 0),
+                cb.isFalse(root.get("hidden")),
+                cb.isTrue(root.get("user").get("enabled")));
     }
 
     public static Specification<Profile> hasAnyInstrument(List<Long> ids) {
@@ -62,6 +68,13 @@ public final class ProfileSpecs {
         if (userId == null)
             return null;
         return (root, query, cb) -> cb.notEqual(root.get("user").get("id"), userId);
+    }
+
+    public static Specification<Profile> notInUserIds(java.util.Collection<Long> userIds) {
+        if (userIds == null || userIds.isEmpty()) {
+            return null;
+        }
+        return (root, query, cb) -> cb.not(root.get("user").get("id").in(userIds));
     }
 
 }

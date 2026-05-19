@@ -18,6 +18,13 @@
 
             <!-- Details column -->
             <div class="md:col-span-2">
+                <div th:if="${isSelf and profile.hidden}"
+                    class="mb-4 px-4 py-3 rounded-lg bg-neutral-800 border border-neutral-700 text-neutral-300 text-sm">
+                    Your profile is hidden from search and listings. Toggle visibility back in
+                    <a th:href="@{/profile/me/edit}" class="underline">Edit profile</a>.
+                </div>
+
+
                 <h1 class="text-4xl font-semibold tracking-tight mb-2" th:text="${profile.displayName}">Display name
                 </h1>
 
@@ -73,7 +80,7 @@
                     </ul>
                 </div>
 
-                <div class="mt-6">
+                <div class="mt-6 flex flex-wrap items-center gap-3">
                     <a th:if="${isSelf}" th:href="@{/profile/me/edit}"
                         class="inline-block bg-white text-black px-5 py-2 rounded-full font-medium hover:bg-neutral-200 transition">
                         Edit profile
@@ -85,6 +92,20 @@
                             Message
                         </button>
                     </form>
+                    <form th:unless="${isSelf}" th:action="@{'/users/' + ${profile.user.id} + '/block'}" method="post"
+                        class="inline"
+                        onsubmit="return confirm('Block this user? You won&#39;t see each other anywhere on Musicrew.');">
+                        <button type="submit" class="text-neutral-400 hover:text-red-400 text-sm px-3 py-2 transition">
+                            Block user
+                        </button>
+                    </form>
+
+                    <!-- report button -->
+                    <a th:unless="${isSelf}" th:href="@{'/users/' + ${profile.user.id} + '/report'}"
+                        class="text-neutral-500 hover:text-amber-400 text-sm px-3 py-2 transition">
+                        Report
+                    </a>
+
                 </div>
 
                 <div th:if="${isSelf and (profile.profilePicPath == null or #lists.isEmpty(profile.videoLinks))}"

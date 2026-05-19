@@ -1,5 +1,6 @@
 package co.sponto.musicrew.listing;
 
+import co.sponto.musicrew.block.BlockRepository;
 import co.sponto.musicrew.profile.Country;
 import co.sponto.musicrew.profile.Genre;
 import co.sponto.musicrew.profile.GenreRepository;
@@ -21,13 +22,14 @@ public class ListingService {
     private final ListingRepository listingRepository;
     private final InstrumentRepository instrumentRepository;
     private final GenreRepository genreRepository;
+    private final BlockRepository blockRepository;
 
-    public ListingService(ListingRepository listingRepository,
-                          InstrumentRepository instrumentRepository,
-                          GenreRepository genreRepository) {
+    public ListingService(ListingRepository listingRepository, InstrumentRepository instrumentRepository,
+            GenreRepository genreRepository, BlockRepository blockRepository) {
         this.listingRepository = listingRepository;
         this.instrumentRepository = instrumentRepository;
         this.genreRepository = genreRepository;
+        this.blockRepository = blockRepository;
     }
 
     public Listing getById(Long id) {
@@ -36,13 +38,17 @@ public class ListingService {
     }
 
     @Transactional(readOnly = true)
-    public List<Listing> feed(List<Long> instrumentIds,
-                              List<Long> genreIds,
-                              Country country) {
+    public List<Listing> feed(List<Long> instrumentIds, List<Long> genreIds,
+            Country country, Long viewerUserId) {
+        Set<Long> blockedIds = viewerUserId == null
+                ? Set.of()
+                : blockRepository.findUserIdsBlockedBetween(viewerUserId);
+
         Specification<Listing> spec = Specification.where(ListingSpecs.isActive())
                 .and(ListingSpecs.hasAnyInstrument(instrumentIds))
                 .and(ListingSpecs.hasAnyGenre(genreIds))
-                .and(ListingSpecs.inCountry(country));
+                .and(ListingSpecs.inCountry(country))
+                .and(ListingSpecs.notFromUserIds(blockedIds));
         return listingRepository.findAll(spec, Sort.by(Sort.Direction.DESC, "createdAt"));
     }
 
@@ -52,12 +58,12 @@ public class ListingService {
 
     @Transactional
     public Listing create(User user,
-                          String title,
-                          String description,
-                          List<Long> instrumentIds,
-                          List<Long> genreIds,
-                          Country country,
-                          String city) {
+            String title,
+            String description,
+            List<Long> instrumentIds,
+            List<Long> genreIds,
+            Country country,
+            String city) {
         Listing listing = new Listing(user, title.trim(), description.trim());
         listing.setCountry(country);
         listing.setCity(city == null ? null : city.trim());
@@ -68,13 +74,13 @@ public class ListingService {
 
     @Transactional
     public Listing update(Long listingId,
-                          Long ownerId,
-                          String title,
-                          String description,
-                          List<Long> instrumentIds,
-                          List<Long> genreIds,
-                          Country country,
-                          String city) {
+            Long ownerId,
+            String title,
+            String description,
+            List<Long> instrumentIds,
+            List<Long> genreIds,
+            Country country,
+            String city) {
         Listing listing = getOwnedById(listingId, ownerId);
         listing.setTitle(title.trim());
         listing.setDescription(description.trim());
@@ -117,4 +123,5 @@ public class ListingService {
         return ids == null ? new HashSet<>()
                 : new HashSet<>(genreRepository.findAllById(ids));
     }
+
 }

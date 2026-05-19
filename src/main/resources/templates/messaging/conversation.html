@@ -3,9 +3,19 @@
 
 <body>
     <section>
-        <a th:href="@{/messages}" class="text-neutral-400 hover:text-white transition text-sm mb-4 inline-block">
-            ← Inbox
-        </a>
+        <div class="flex items-center justify-between mb-4">
+            <a th:href="@{/messages}" class="text-neutral-400 hover:text-white transition text-sm">
+                ← Inbox
+            </a>
+            <form th:action="@{'/messages/' + ${conversation.id} + '/delete'}" method="post"
+                onsubmit="return confirm('Delete this conversation? All messages will be lost for both you and the other person.');">
+                <button type="submit" class="text-red-400 hover:text-red-300 transition text-sm">
+                    Delete conversation
+                </button>
+            </form>
+        </div>
+
+
 
         <a th:href="@{'/profile/' + ${other.id}}" class="flex items-center gap-3 mb-6 group w-fit">
             <img th:if="${otherProfile.profilePicPath != null}" th:src="${otherProfile.profilePicPath}"
@@ -32,8 +42,13 @@
             </div>
         </div>
 
-        <!-- send form -->
-        <form th:action="@{'/messages/' + ${conversation.id}}" method="post" class="flex gap-2 items-end">
+        <!-- send form (or block banner) -->
+        <div th:if="${isBlocked}"
+            class="px-4 py-3 rounded-lg bg-neutral-800 border border-neutral-700 text-neutral-300 text-sm">
+            You can't send messages here — there's a block between you and this user.
+        </div>
+        <form th:unless="${isBlocked}" th:action="@{'/messages/' + ${conversation.id}}" method="post"
+            class="flex gap-2 items-end">
             <textarea name="body" required rows="2" placeholder="Type a message…"
                 class="flex-1 bg-neutral-950 border border-neutral-800 text-white px-4 py-2.5 rounded-2xl focus:outline-none focus:border-neutral-600 transition resize-none"></textarea>
             <button type="submit"

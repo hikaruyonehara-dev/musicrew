@@ -41,6 +41,10 @@
                 </li>
 
                 <!-- Authenticated nav -->
+                <li sec:authorize="hasRole('ADMIN')">
+                    <a class="text-amber-400 hover:text-amber-300 transition" th:href="@{/admin/reports}">Admin</a>
+                </li>
+
                 <li sec:authorize="isAuthenticated()">
                     <a class="text-neutral-400 hover:text-white transition" th:href="@{/home}">Home</a>
                 </li>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: base(title='Blocked users', content=~{::section})}">
+
+<body>
+    <section>
+        <div class="max-w-2xl mx-auto">
+            <div class="mb-6">
+                <a th:href="@{/profile/me/edit}" class="text-neutral-400 hover:text-white text-sm transition">
+                    &larr; Back to settings
+                </a>
+            </div>
+
+            <h1 class="text-3xl font-semibold tracking-tight mb-2">Blocked users</h1>
+            <p class="text-neutral-400 mb-8">
+                You and these users can't see each other anywhere on Musicrew.
+            </p>
+
+            <div class="bg-neutral-900 border border-neutral-800 rounded-xl p-6">
+                <p th:if="${#lists.isEmpty(myBlocks)}" class="text-neutral-400 text-sm">
+                    You haven't blocked anyone.
+                </p>
+                <ul th:unless="${#lists.isEmpty(myBlocks)}" class="space-y-2">
+                    <li th:each="b : ${myBlocks}"
+                        class="flex items-center justify-between px-4 py-3 rounded-lg bg-neutral-950 border border-neutral-800">
+                        <div>
+                            <div class="font-medium" th:text="${b.blocked.email}">user@example.com</div>
+                            <div class="text-xs text-neutral-500"
+                                th:text="'Blocked on ' + ${#temporals.format(b.createdAt, 'yyyy-MM-dd')}">
+                                Blocked on 2026-01-01
+                            </div>
+                        </div>
+                        <form th:action="@{'/users/' + ${b.blocked.id} + '/unblock'}" method="post">
+                            <button type="submit"
+                                class="text-sm text-neutral-400 hover:text-white border border-neutral-700 px-3 py-1.5 rounded-full transition">
+                                Unblock
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

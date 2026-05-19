@@ -6,7 +6,8 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
+import co.sponto.musicrew.listing.Listing;
+import co.sponto.musicrew.listing.ListingRepository;
 import co.sponto.musicrew.upload.FileStorageService;
 import co.sponto.musicrew.user.User;
 import co.sponto.musicrew.user.UserRepository;
@@ -20,15 +21,17 @@ public class ProfileService {
     private final InstrumentRepository instrumentRepository;
     private final GenreRepository genreRepository;
     private final FileStorageService fileStorage;
+    private final ListingRepository listingRepository;
 
     public ProfileService(ProfileRepository profileRepository, UserRepository userRepository,
             InstrumentRepository instrumentRepository, GenreRepository genreRepository,
-            FileStorageService fileStorage) {
+            FileStorageService fileStorage, ListingRepository listingRepository) {
         this.profileRepository = profileRepository;
         this.userRepository = userRepository;
         this.instrumentRepository = instrumentRepository;
         this.genreRepository = genreRepository;
         this.fileStorage = fileStorage;
+        this.listingRepository = listingRepository;
     }
 
     public Profile getByUserEmail(String email) {
@@ -119,6 +122,23 @@ public class ProfileService {
         Profile profile = getById(profileId);
         profile.getMusicLinks().removeIf(v -> v.getId().equals(muiscLinkId));
         profile.touch();
+    }
+
+    @Transactional
+    public void toggleHidden(Long profileId) {
+        Profile profile = getById(profileId);
+        profile.setHidden(!profile.isHidden());
+        profile.touch();
+    }
+
+    @Transactional
+    public void deleteAccount(Long userId) {
+        List<Listing> listings = listingRepository.findByUserIdOrderByCreatedAtDesc(userId);
+        listingRepository.deleteAll(listings);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("User not found: " + userId));
+        user.setEnabled(false);
     }
 
     public List<Instrument> allInstruments() {

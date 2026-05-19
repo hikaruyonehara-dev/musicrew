@@ -1,5 +1,6 @@
 package co.sponto.musicrew.messaging;
 
+import co.sponto.musicrew.block.BlockService;
 import co.sponto.musicrew.user.User;
 import co.sponto.musicrew.user.UserRepository;
 import org.springframework.stereotype.Service;
@@ -13,19 +14,25 @@ public class MessagingService {
     private final ConversationRepository conversationRepository;
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
+    private final BlockService blockService;
 
     public MessagingService(ConversationRepository conversationRepository,
             MessageRepository messageRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            BlockService blockService) {
         this.conversationRepository = conversationRepository;
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
+        this.blockService = blockService;
     }
 
     @Transactional
     public Conversation findOrCreateConversation(User me, Long otherUserId) {
         if (me.getId().equals(otherUserId)) {
             throw new IllegalArgumentException("Cannot message yourself");
+        }
+        if (blockService.isBlockedBetween(me.getId(), otherUserId)) {
+            throw new IllegalArgumentException("You can't message a blocked user");
         }
         User other = userRepository.findById(otherUserId)
                 .orElseThrow(() -> new IllegalArgumentException("Other user not found"));
@@ -62,6 +69,10 @@ public class MessagingService {
     @Transactional
     public Message send(User me, Long conversationId, String body) {
         Conversation c = getConversationFor(me, conversationId);
+        User other = c.otherParticipant(me);
+        if (blockService.isBlockedBetween(me.getId(), other.getId())) {
+            throw new IllegalArgumentException("You can't send messages to a blocked user");
+        }
         if (body == null || body.isBlank()) {
             throw new IllegalArgumentException("Message cannot be empty");
         }
@@ -75,5 +86,15 @@ public class MessagingService {
                 m.markRead();
             }
         }
+    }
+
+    @Transactional
+    public void deleteConversation(User me, Long conversationId) {
+        Conversation c = getConversationFor(me, conversationId);
+
+        List<Message> messages = messageRepository.findByConversationIdOrderBySentAtAsc(conversationId);
+        messageRepository.deleteAll(messages);
+
+        conversationRepository.delete(c);
     }
 }

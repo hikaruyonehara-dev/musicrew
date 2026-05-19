@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: base(title='Admin · Reports', content=~{::section})}">
+
+<body>
+    <section>
+        <div class="mb-8">
+            <h1 class="text-3xl font-semibold tracking-tight mb-1">Reports</h1>
+            <p class="text-neutral-400">
+                <span th:text="${openCount}">0</span> open
+            </p>
+        </div>
+
+        <!-- Status tabs -->
+        <div class="flex gap-2 mb-6 border-b border-neutral-800">
+            <a th:each="s : ${statuses}" th:href="@{/admin/reports(status=${s.name()})}"
+                th:classappend="${s == status} ? 'border-white text-white' : 'border-transparent text-neutral-400 hover:text-white'"
+                class="px-4 py-2 border-b-2 text-sm transition" th:text="${s.name()}">OPEN</a>
+        </div>
+
+        <!-- Empty state -->
+        <div th:if="${#lists.isEmpty(reports)}"
+            class="bg-neutral-900 border border-neutral-800 rounded-xl p-8 text-center text-neutral-400">
+            No <span th:text="${#strings.toLowerCase(status.name())}">open</span> reports.
+        </div>
+
+        <!-- Report list -->
+        <ul th:unless="${#lists.isEmpty(reports)}" class="space-y-3">
+            <li th:each="r : ${reports}" class="bg-neutral-900 border border-neutral-800 rounded-xl p-5">
+                <div class="flex items-start justify-between gap-4 mb-3">
+                    <div class="min-w-0">
+                        <div class="text-xs text-neutral-500 mb-1"
+                            th:text="${#temporals.format(r.createdAt, 'yyyy-MM-dd HH:mm')}">
+                            2026-05-19 14:32
+                        </div>
+                        <div class="font-medium">
+                            <a th:href="@{'/profile/' + ${r.reported.id}}" class="hover:text-amber-400 transition"
+                                th:text="${r.reported.email}">reported@example.com</a>
+                            <span class="text-neutral-500 text-sm font-normal">
+                                reported by
+                                <span th:text="${r.reporter.email}">reporter@example.com</span>
+                            </span>
+                        </div>
+                        <div class="mt-2">
+                            <span
+                                class="text-xs uppercase tracking-wider px-2 py-1 rounded bg-neutral-800 text-neutral-300"
+                                th:text="${r.reason.label()}">Spam</span>
+                        </div>
+                        <p th:if="${r.description != null}" class="mt-3 text-sm text-neutral-300 whitespace-pre-line"
+                            th:text="${r.description}"></p>
+                    </div>
+
+                    <!-- Actions only for OPEN -->
+                    <div th:if="${r.status.name() == 'OPEN'}" class="flex flex-col gap-2 shrink-0">
+                        <form th:action="@{'/admin/reports/' + ${r.id} + '/review'}" method="post">
+                            <button type="submit"
+                                class="w-full bg-white text-black text-sm px-4 py-1.5 rounded-full font-medium hover:bg-neutral-200 transition">
+                                Mark reviewed
+                            </button>
+                        </form>
+                        <form th:action="@{'/admin/reports/' + ${r.id} + '/dismiss'}" method="post">
+                            <button type="submit"
+                                class="w-full text-sm text-neutral-400 hover:text-white border border-neutral-700 px-4 py-1.5 rounded-full transition">
+                                Dismiss
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Audit trail for non-OPEN -->
+                    <div th:unless="${r.status.name() == 'OPEN'}" class="text-xs text-neutral-500 shrink-0 text-right">
+                        <div th:text="${r.status.name()}">REVIEWED</div>
+                        <div th:if="${r.reviewedAt != null}"
+                            th:text="${#temporals.format(r.reviewedAt, 'yyyy-MM-dd HH:mm')}"></div>
+                        <div th:if="${r.reviewedBy != null}" th:text="'by ' + ${r.reviewedBy.email}"></div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </section>
+</body>
+
+</html>

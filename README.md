@@ -4,7 +4,10 @@
 
 Musicrew lets musicians create a profile (instruments, genres, location, performance videos, music distribution links), discover other musicians by filter, and chat in 1:1 conversations. Built from a formal Requirements → Design → Implementation → Test → Deploy cycle.
 
-**Live demo:** `http://54.250.174.66:8080`
+**デモ:** `http://54.250.174.66:8080`
+**USER:** `test1@test.com`
+**PASSWORD:** `Password`
+
 
 ---
 

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: base(title='Not found', content=~{::section})}">
+
+<body>
+    <section>
+        <div class="max-w-md mx-auto text-center py-20">
+            <div class="text-6xl font-bold tracking-tight mb-4">404</div>
+            <h1 class="text-2xl font-semibold mb-3">Page not found</h1>
+            <p class="text-neutral-400 mb-8">
+                The page you're looking for doesn't exist, or the profile is no longer available.
+            </p>
+            <a th:href="@{/home}"
+                class="inline-block bg-white text-black px-5 py-2 rounded-full font-medium hover:bg-neutral-200 transition">
+                Back to home
+            </a>
+        </div>
+    </section>
+</body>
+
+</html>

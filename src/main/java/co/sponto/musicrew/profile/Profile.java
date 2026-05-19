@@ -44,6 +44,10 @@ public class Profile {
 
     private String profilePicPath;
 
+    @Column(nullable = false)
+    @org.hibernate.annotations.ColumnDefault("false")
+    private boolean hidden = false;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "profile_instruments", joinColumns = @JoinColumn(name = "profile_id"), inverseJoinColumns = @JoinColumn(name = "instrument_id"))
     private Set<Instrument> instruments = new HashSet<>();

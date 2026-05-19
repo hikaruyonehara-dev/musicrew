@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
+import co.sponto.musicrew.block.BlockService;
 
 import co.sponto.musicrew.profile.Country;
 import co.sponto.musicrew.profile.Profile;
@@ -26,20 +30,23 @@ public class ListingController {
     private final ListingService listingService;
     private final ProfileService profileService;
     private final UserService userService;
+    private final BlockService blockService;
 
     public ListingController(ListingService listingService, ProfileService profileService,
-            UserService userService) {
+            UserService userService, BlockService blockService) {
         this.listingService = listingService;
         this.profileService = profileService;
         this.userService = userService;
+        this.blockService = blockService;
     }
 
     @GetMapping("/home")
     public String feed(@RequestParam(required = false) List<Long> instrumentIds,
             @RequestParam(required = false) List<Long> genreIds, @RequestParam(required = false) Country country,
             @AuthenticationPrincipal UserDetails principal, Model model) {
-        List<Listing> listings = listingService.feed(instrumentIds, genreIds, country);
+
         User me = userService.getByEmail(principal.getUsername());
+        List<Listing> listings = listingService.feed(instrumentIds, genreIds, country, me.getId());
 
         Map<Long, String> posterNames = new HashMap<>();
         Map<Long, String> posterAvatars = new HashMap<>();
@@ -92,9 +99,18 @@ public class ListingController {
         User me = userService.getByEmail(principal.getUsername());
         Profile posterProfile = profileService.getByUserId(listing.getUser().getId());
 
+        boolean isOwner = listing.getUser().getId().equals(me.getId());
+
+        boolean blocked = !isOwner && blockService.isBlockedBetween(me.getId(), listing.getUser().getId());
+
+        if (!isOwner && (blocked || posterProfile.isHidden() ||
+                !listing.getUser().isEnabled() || !listing.isActive())) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
         model.addAttribute("listing", listing);
         model.addAttribute("posterProfile", posterProfile);
-        model.addAttribute("isOwner", listing.getUser().getId().equals(me.getId()));
+        model.addAttribute("isOwner", isOwner);
 
         return "listings/view";
     }
