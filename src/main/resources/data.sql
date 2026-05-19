@@ -48,43 +48,20 @@ VALUES
 
 -- Seed admin user. Password: "Password"  (change in prod!)
 -- Hash is BCrypt cost-10. Spring Security accepts $2a/$2b/$2y prefixes interchangeably.
-MERGE INTO users (
-    id,
-    email,
-    password_hash,
-    date_of_birth,
-    created_at,
-    enabled,
-    role
-) KEY (email)
-VALUES
-    (
-        1,
-        'admin@test.com',
-        '$2b$10$s0muS.0QDWUNBwkJNANsFueMHG.AYJiy277nJWCFFP9KmBwVXtjqS',
-        '1990-01-01',
-        CURRENT_TIMESTAMP,
-        TRUE,
-        'ADMIN'
-    );
+-- INSERT ... WHERE NOT EXISTS is idempotent against both fresh and populated DBs.
+INSERT INTO users (email, password_hash, date_of_birth, created_at, enabled, role)
+SELECT 'admin@test.com',
+       '$2b$10$s0muS.0QDWUNBwkJNANsFueMHG.AYJiy277nJWCFFP9KmBwVXtjqS',
+       '1990-01-01',
+       CURRENT_TIMESTAMP,
+       TRUE,
+       'ADMIN'
+WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = 'admin@test.com');
 
 -- Seed admin's profile (one Profile per User is required).
-MERGE INTO profile (
-    id,
-    user_id,
-    display_name,
-    skill_badge,
-    hidden,
-    created_at,
-    updated_at
-) KEY (user_id)
-VALUES
-    (
-        1,
-        1,
-        'Admin',
-        'PRO',
-        FALSE,
-        CURRENT_TIMESTAMP,
-        CURRENT_TIMESTAMP
-    );
+-- Look up the admin's id by email so we don't depend on a fixed value.
+INSERT INTO profile (user_id, display_name, skill_badge, hidden, created_at, updated_at)
+SELECT u.id, 'Admin', 'PRO', FALSE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP
+FROM users u
+WHERE u.email = 'admin@test.com'
+  AND NOT EXISTS (SELECT 1 FROM profile WHERE user_id = u.id);
