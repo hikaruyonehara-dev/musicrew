@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: base(title='New listing', content=~{::section})}">
+
+<body>
+    <section>
+        <div class="max-w-2xl mx-auto">
+            <h1 class="text-3xl font-semibold tracking-tight mb-2">Post a listing</h1>
+            <p class="text-neutral-400 mb-8">
+                Looking for a drummer? Bandmate? Session player? Tell people what you need.
+            </p>
+
+            <form th:action="@{/listings}" method="post" class="space-y-5">
+
+                <!-- Title -->
+                <div>
+                    <label class="block text-sm text-neutral-400 mb-1.5">Title</label>
+                    <input type="text" name="title" required maxlength="100"
+                        placeholder="Drummer wanted for jazz trio in Tokyo"
+                        class="w-full bg-neutral-900 border border-neutral-800 text-white px-4 py-2.5 rounded-lg focus:outline-none focus:border-neutral-600 transition" />
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label class="block text-sm text-neutral-400 mb-1.5">Description</label>
+                    <textarea name="description" required rows="5" maxlength="2000"
+                        placeholder="Style, experience level, frequency, what you're hoping to do together..."
+                        class="w-full bg-neutral-900 border border-neutral-800 text-white px-4 py-2.5 rounded-lg focus:outline-none focus:border-neutral-600 transition resize-y"></textarea>
+                </div>
+
+                <!-- Country + City -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm text-neutral-400 mb-1.5">Country</label>
+                        <select name="country"
+                            class="w-full bg-neutral-900 border border-neutral-800 text-white px-4 py-2.5 rounded-lg focus:outline-none focus:border-neutral-600 transition">
+                            <option value="" class="bg-neutral-900 text-white">—</option>
+                            <option th:each="c : ${allCountries}" th:value="${c}" th:text="${c}"
+                                class="bg-neutral-900 text-white"></option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-neutral-400 mb-1.5">City</label>
+                        <input type="text" name="city" maxlength="100"
+                            class="w-full bg-neutral-900 border border-neutral-800 text-white px-4 py-2.5 rounded-lg focus:outline-none focus:border-neutral-600 transition" />
+                    </div>
+                </div>
+
+                <!-- Instruments needed -->
+                <div>
+                    <label class="block text-sm text-neutral-400 mb-2">Instruments needed</label>
+                    <div
+                        class="grid grid-cols-2 md:grid-cols-3 gap-2 bg-neutral-950 border border-neutral-800 rounded-lg p-3">
+                        <label th:each="i : ${allInstruments}" class="flex items-center gap-2 text-sm">
+                            <input type="checkbox" name="instrumentIds" th:value="${i.id}"
+                                class="rounded border-neutral-700 bg-neutral-900" />
+                            <span th:text="${i.name}"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Genres -->
+                <div>
+                    <label class="block text-sm text-neutral-400 mb-2">Genres</label>
+                    <div
+                        class="grid grid-cols-2 md:grid-cols-3 gap-2 bg-neutral-950 border border-neutral-800 rounded-lg p-3">
+                        <label th:each="g : ${allGenres}" class="flex items-center gap-2 text-sm">
+                            <input type="checkbox" name="genreIds" th:value="${g.id}"
+                                class="rounded border-neutral-700 bg-neutral-900" />
+                            <span th:text="${g.name}"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Submit + cancel -->
+                <div class="flex items-center gap-3 pt-2">
+                    <button type="submit"
+                        class="bg-white text-black px-6 py-2.5 rounded-full font-medium hover:bg-neutral-200 transition">
+                        Post listing
+                    </button>
+                    <a th:href="@{/home}" class="text-neutral-400 hover:text-white transition px-4 py-2.5">
+                        Cancel
+                    </a>
+                </div>
+            </form>
+        </div>
+    </section>
+</body>
+
+</html>

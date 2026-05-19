@@ -31,12 +31,27 @@
         <div class="max-w-6xl mx-auto px-6 flex justify-between items-center h-16">
             <a class="font-semibold tracking-tight" th:href="@{/}">Musicrew</a>
             <ul class="flex space-x-6 items-center text-sm">
+                <!-- Anonymous nav -->
                 <li sec:authorize="!isAuthenticated()">
                     <a class="text-neutral-400 hover:text-white transition" th:href="@{/login}">Log in</a>
                 </li>
                 <li sec:authorize="!isAuthenticated()">
                     <a class="bg-white text-black px-4 py-1.5 rounded-full font-medium hover:bg-neutral-200 transition"
                         th:href="@{/signup}">Sign up</a>
+                </li>
+
+                <!-- Authenticated nav -->
+                <li sec:authorize="isAuthenticated()">
+                    <a class="text-neutral-400 hover:text-white transition" th:href="@{/home}">Home</a>
+                </li>
+                <li sec:authorize="isAuthenticated()">
+                    <a class="text-neutral-400 hover:text-white transition" th:href="@{/search}">Search</a>
+                </li>
+                <li sec:authorize="isAuthenticated()">
+                    <a class="text-neutral-400 hover:text-white transition" th:href="@{/messages}">Messages</a>
+                </li>
+                <li sec:authorize="isAuthenticated()">
+                    <a class="text-neutral-400 hover:text-white transition" th:href="@{/profile/me}">Profile</a>
                 </li>
                 <li sec:authorize="isAuthenticated()">
                     <form th:action="@{/logout}" method="post" class="inline">

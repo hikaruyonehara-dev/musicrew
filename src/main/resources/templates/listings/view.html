@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: base(title=${listing.title}, content=~{::section})}">
+
+<body>
+    <section>
+        <div class="max-w-3xl mx-auto">
+
+            <a th:href="@{/home}" class="text-neutral-400 hover:text-white transition text-sm mb-6 inline-block">
+                ← Back to listings
+            </a>
+
+            <article class="bg-neutral-900 border border-neutral-800 rounded-xl p-6 md:p-8">
+
+                <!-- Closed badge -->
+                <div th:unless="${listing.active}" class="mb-4">
+                    <span class="px-3 py-1 rounded-full bg-neutral-800 text-neutral-400 text-sm">Closed</span>
+                </div>
+
+                <h1 class="text-3xl md:text-4xl font-semibold tracking-tight mb-4" th:text="${listing.title}">Title</h1>
+
+                <!-- Poster -->
+                <a th:href="@{'/profile/' + ${listing.user.id}}" class="flex items-center gap-3 mb-6 group w-fit">
+                    <img th:if="${posterProfile.profilePicPath != null}" th:src="${posterProfile.profilePicPath}"
+                        class="w-10 h-10 rounded-full object-cover border border-neutral-800" alt="poster avatar" />
+                    <div th:unless="${posterProfile.profilePicPath != null}"
+                        class="w-10 h-10 rounded-full bg-neutral-800 border border-neutral-800 flex items-center justify-center text-xs text-neutral-500">
+                        ?
+                    </div>
+                    <div>
+                        <div class="font-medium group-hover:text-neutral-300 transition"
+                            th:text="${posterProfile.displayName}">Display name</div>
+                        <div class="text-xs text-neutral-500"
+                            th:text="${T(co.sponto.musicrew.util.RelativeTime).format(listing.createdAt)}">2h</div>
+                    </div>
+                </a>
+
+                <!-- Description (preserve user line breaks) -->
+                <div class="text-neutral-200 leading-relaxed whitespace-pre-wrap mb-6" th:text="${listing.description}">
+                    Full description...</div>
+
+                <!-- Tags -->
+                <div th:if="${!#lists.isEmpty(listing.instrumentsNeeded)}" class="mb-4">
+                    <h3 class="text-xs uppercase tracking-wider text-neutral-500 mb-2">Looking for</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span th:each="i : ${listing.instrumentsNeeded}"
+                            class="px-3 py-1 rounded-full bg-neutral-950 border border-neutral-800 text-sm"
+                            th:text="${i.name}"></span>
+                    </div>
+                </div>
+
+                <div th:if="${!#lists.isEmpty(listing.genres)}" class="mb-4">
+                    <h3 class="text-xs uppercase tracking-wider text-neutral-500 mb-2">Genres</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span th:each="g : ${listing.genres}"
+                            class="px-3 py-1 rounded-full bg-neutral-950 border border-neutral-800 text-sm text-neutral-400"
+                            th:text="${g.name}"></span>
+                    </div>
+                </div>
+
+                <!-- Location -->
+                <div th:if="${listing.country != null}" class="mb-6">
+                    <h3 class="text-xs uppercase tracking-wider text-neutral-500 mb-2">Location</h3>
+                    <div class="text-neutral-300">
+                        <span th:if="${listing.city != null}" th:text="${listing.city + ', ' + listing.country}"></span>
+                        <span th:if="${listing.city == null}" th:text="${listing.country}"></span>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="border-t border-neutral-800 pt-6 mt-6">
+
+                    <!-- Non-owner: Message poster -->
+                    <form th:unless="${isOwner}" th:action="@{'/messages/start/' + ${listing.user.id}}" method="post">
+                        <button type="submit"
+                            class="bg-white text-black px-6 py-2.5 rounded-full font-medium hover:bg-neutral-200 transition">
+                            Message poster
+                        </button>
+                    </form>
+
+                    <!-- Owner: Edit / Mark filled / Delete -->
+                    <div th:if="${isOwner}" class="flex flex-wrap items-center gap-3">
+                        <a th:href="@{'/listings/' + ${listing.id} + '/edit'}"
+                            class="bg-white text-black px-5 py-2 rounded-full font-medium hover:bg-neutral-200 transition">
+                            Edit
+                        </a>
+                        <form th:if="${listing.active}" th:action="@{'/listings/' + ${listing.id} + '/close'}"
+                            method="post" class="inline">
+                            <button type="submit"
+                                class="border border-neutral-700 text-white px-5 py-2 rounded-full font-medium hover:bg-neutral-800 transition">
+                                Mark as filled
+                            </button>
+                        </form>
+                        <form th:action="@{'/listings/' + ${listing.id} + '/delete'}" method="post"
+                            class="inline ml-auto"
+                            onsubmit="return confirm('Delete this listing? This cannot be undone.');">
+                            <button type="submit" class="text-red-400 hover:text-red-300 transition text-sm">
+                                Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+</body>
+
+</html>
