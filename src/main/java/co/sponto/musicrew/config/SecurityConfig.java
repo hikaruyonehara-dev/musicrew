@@ -22,7 +22,8 @@ public class SecurityConfig {
                 http
                                 // choosing which pages to pass through the security check
                                 .authorizeHttpRequests(auth -> auth
-                                                .requestMatchers("/", "/signup", "/login", "/css/**", "/js/**",
+                                                .requestMatchers("/", "/signup", "/login", "/forgot-password",
+                                                                "/reset-password", "/css/**", "/js/**",
                                                                 "/webjars/**", "h2-console/**", "/images/**")
                                                 .permitAll()
                                                 .requestMatchers("/admin/**")
