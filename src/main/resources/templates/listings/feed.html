@@ -4,128 +4,141 @@
 <body>
     <section>
 
-        <!-- Header: title + new listing CTA -->
-        <div class="flex items-center justify-between mb-6">
-            <h1 class="text-3xl font-semibold tracking-tight">Listings</h1>
-            <a th:href="@{/listings/new}"
-                class="bg-white text-black px-5 py-2 rounded-full font-medium hover:bg-neutral-200 transition">
-                + New listing
-            </a>
-        </div>
+        <section>
 
-        <!-- Filters (collapsed accordions for instruments/genres, plain select for country) -->
-        <form method="get" th:action="@{/home}" class="bg-neutral-900 border border-neutral-800 rounded-xl p-4 mb-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+            <!-- Fixed background — singer photo with right-to-left dark gradient -->
+            <img src="/images/singer-bg.jpg" alt="" class="fixed inset-0 w-full h-full object-cover -z-10"
+                style="object-position: 75% center;" />
+            <div class="fixed inset-0 -z-10
+                bg-gradient-to-r from-neutral-950 via-neutral-950/90 to-neutral-950/50"></div>
 
-                <details class="bg-neutral-950 border border-neutral-800 rounded-lg group">
-                    <summary
-                        class="cursor-pointer list-none px-3 py-2 text-sm flex items-center justify-between hover:bg-neutral-900 rounded-lg transition">
-                        <span>
-                            <span class="text-neutral-400">Instruments</span>
-                            <span class="text-neutral-500 ml-1" th:if="${!selectedInstruments.isEmpty()}"
-                                th:text="'(' + ${selectedInstruments.size()} + ')'"></span>
-                        </span>
-                        <span class="text-neutral-500 transition-transform group-open:rotate-180">▼</span>
-                    </summary>
-                    <div class="grid grid-cols-2 gap-2 px-3 pb-3 pt-2 border-t border-neutral-800">
-                        <label th:each="i : ${allInstruments}" class="flex items-center gap-2 text-sm">
-                            <input type="checkbox" name="instrumentIds" th:value="${i.id}"
-                                th:checked="${selectedInstruments.contains(i.id)}"
-                                class="rounded border-neutral-700 bg-neutral-900" />
-                            <span th:text="${i.name}"></span>
-                        </label>
-                    </div>
-                </details>
+            <!-- Header: title + new listing CTA -->
 
-                <details class="bg-neutral-950 border border-neutral-800 rounded-lg group">
-                    <summary
-                        class="cursor-pointer list-none px-3 py-2 text-sm flex items-center justify-between hover:bg-neutral-900 rounded-lg transition">
-                        <span>
-                            <span class="text-neutral-400">Genres</span>
-                            <span class="text-neutral-500 ml-1" th:if="${!selectedGenres.isEmpty()}"
-                                th:text="'(' + ${selectedGenres.size()} + ')'"></span>
-                        </span>
-                        <span class="text-neutral-500 transition-transform group-open:rotate-180">▼</span>
-                    </summary>
-                    <div class="grid grid-cols-2 gap-2 px-3 pb-3 pt-2 border-t border-neutral-800">
-                        <label th:each="g : ${allGenres}" class="flex items-center gap-2 text-sm">
-                            <input type="checkbox" name="genreIds" th:value="${g.id}"
-                                th:checked="${selectedGenres.contains(g.id)}"
-                                class="rounded border-neutral-700 bg-neutral-900" />
-                            <span th:text="${g.name}"></span>
-                        </label>
-                    </div>
-                </details>
-
-                <div>
-                    <label class="block text-sm text-neutral-400 mb-1 px-1">Country</label>
-                    <select name="country"
-                        class="w-full bg-neutral-950 border border-neutral-800 text-white px-3 py-2 rounded-lg focus:outline-none focus:border-neutral-600 transition">
-                        <option value="" class="bg-neutral-900 text-white">Any</option>
-                        <option th:each="c : ${allCountries}" th:value="${c}" th:text="${c}"
-                            th:selected="${selectedCountry == c}" class="bg-neutral-900 text-white"></option>
-                    </select>
-                </div>
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="text-3xl font-semibold tracking-tight">Listings</h1>
+                <a th:href="@{/listings/new}"
+                    class="bg-white text-black px-5 py-2 rounded-full font-medium hover:bg-neutral-200 transition">
+                    + New listing
+                </a>
             </div>
-            <button type="submit"
-                class="bg-white text-black px-4 py-1.5 rounded-full font-medium hover:bg-neutral-200 transition text-sm">
-                Apply filters
-            </button>
-        </form>
 
-        <!-- Empty state -->
-        <div th:if="${#lists.isEmpty(listings)}" class="text-neutral-500 text-center py-16">
-            <p class="mb-2">No listings yet.</p>
-            <p>Be the first to
-                <a th:href="@{/listings/new}" class="text-blue-400 hover:text-blue-300 transition">post one</a>.
-            </p>
-        </div>
+            <!-- Filters (collapsed accordions for instruments/genres, plain select for country) -->
+            <form method="get" th:action="@{/home}"
+                class="bg-neutral-900 border border-neutral-800 rounded-xl p-4 mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
 
-        <!-- The feed -->
-        <div class="space-y-4" th:unless="${#lists.isEmpty(listings)}">
-            <article th:each="l : ${listings}"
-                class="bg-neutral-900 border border-neutral-800 hover:border-neutral-700 rounded-xl p-5 transition">
+                    <details class="bg-neutral-950 border border-neutral-800 rounded-lg group">
+                        <summary
+                            class="cursor-pointer list-none px-3 py-2 text-sm flex items-center justify-between hover:bg-neutral-900 rounded-lg transition">
+                            <span>
+                                <span class="text-neutral-400">Instruments</span>
+                                <span class="text-neutral-500 ml-1" th:if="${!selectedInstruments.isEmpty()}"
+                                    th:text="'(' + ${selectedInstruments.size()} + ')'"></span>
+                            </span>
+                            <span class="text-neutral-500 transition-transform group-open:rotate-180">▼</span>
+                        </summary>
+                        <div class="grid grid-cols-2 gap-2 px-3 pb-3 pt-2 border-t border-neutral-800">
+                            <label th:each="i : ${allInstruments}" class="flex items-center gap-2 text-sm">
+                                <input type="checkbox" name="instrumentIds" th:value="${i.id}"
+                                    th:checked="${selectedInstruments.contains(i.id)}"
+                                    class="rounded border-neutral-700 bg-neutral-900" />
+                                <span th:text="${i.name}"></span>
+                            </label>
+                        </div>
+                    </details>
 
-                <!-- Poster header -->
-                <a th:href="@{'/profile/' + ${l.user.id}}" class="flex items-center gap-3 mb-3 group w-fit">
-                    <img th:if="${posterAvatars[l.id] != null}" th:src="${posterAvatars[l.id]}"
-                        class="w-10 h-10 rounded-full object-cover border border-neutral-800" alt="poster avatar" />
-                    <div th:unless="${posterAvatars[l.id] != null}"
-                        class="w-10 h-10 rounded-full bg-neutral-800 border border-neutral-800 flex items-center justify-center text-xs text-neutral-500">
-                        ?
-                    </div>
+                    <details class="bg-neutral-950 border border-neutral-800 rounded-lg group">
+                        <summary
+                            class="cursor-pointer list-none px-3 py-2 text-sm flex items-center justify-between hover:bg-neutral-900 rounded-lg transition">
+                            <span>
+                                <span class="text-neutral-400">Genres</span>
+                                <span class="text-neutral-500 ml-1" th:if="${!selectedGenres.isEmpty()}"
+                                    th:text="'(' + ${selectedGenres.size()} + ')'"></span>
+                            </span>
+                            <span class="text-neutral-500 transition-transform group-open:rotate-180">▼</span>
+                        </summary>
+                        <div class="grid grid-cols-2 gap-2 px-3 pb-3 pt-2 border-t border-neutral-800">
+                            <label th:each="g : ${allGenres}" class="flex items-center gap-2 text-sm">
+                                <input type="checkbox" name="genreIds" th:value="${g.id}"
+                                    th:checked="${selectedGenres.contains(g.id)}"
+                                    class="rounded border-neutral-700 bg-neutral-900" />
+                                <span th:text="${g.name}"></span>
+                            </label>
+                        </div>
+                    </details>
+
                     <div>
-                        <div class="font-medium group-hover:text-neutral-300 transition" th:text="${posterNames[l.id]}">
-                            Display name</div>
-                        <div class="text-xs text-neutral-500"
-                            th:text="${T(co.sponto.musicrew.util.RelativeTime).format(l.createdAt)}">2h</div>
+                        <label class="block text-sm text-neutral-400 mb-1 px-1">Country</label>
+                        <select name="country"
+                            class="w-full bg-neutral-950 border border-neutral-800 text-white px-3 py-2 rounded-lg focus:outline-none focus:border-neutral-600 transition">
+                            <option value="" class="bg-neutral-900 text-white">Any</option>
+                            <option th:each="c : ${allCountries}" th:value="${c}" th:text="${c}"
+                                th:selected="${selectedCountry == c}" class="bg-neutral-900 text-white"></option>
+                        </select>
                     </div>
-                </a>
-
-                <!-- Title + description preview -->
-                <a th:href="@{'/listings/' + ${l.id}}" class="block">
-                    <h2 class="text-xl font-semibold mb-2 hover:text-neutral-300 transition" th:text="${l.title}">Title
-                    </h2>
-                    <p class="text-neutral-300 mb-4 leading-relaxed line-clamp-3" th:text="${l.description}">Description
-                        preview...</p>
-                </a>
-
-                <!-- Tags + location row -->
-                <div class="flex flex-wrap items-center gap-2 text-sm">
-                    <span th:each="i : ${l.instrumentsNeeded}"
-                        class="px-2.5 py-0.5 rounded-full bg-neutral-950 border border-neutral-800 text-neutral-300"
-                        th:text="${i.name}"></span>
-                    <span th:each="g : ${l.genres}"
-                        class="px-2.5 py-0.5 rounded-full bg-neutral-950 border border-neutral-800 text-neutral-500"
-                        th:text="${g.name}"></span>
-                    <span class="text-neutral-500 ml-auto" th:if="${l.city != null and l.country != null}"
-                        th:text="${l.city + ', ' + l.country}"></span>
-                    <span class="text-neutral-500 ml-auto" th:if="${l.city == null and l.country != null}"
-                        th:text="${l.country}"></span>
                 </div>
-            </article>
-        </div>
-    </section>
+                <button type="submit"
+                    class="bg-white text-black px-4 py-1.5 rounded-full font-medium hover:bg-neutral-200 transition text-sm">
+                    Apply filters
+                </button>
+            </form>
+
+            <!-- Empty state -->
+            <div th:if="${#lists.isEmpty(listings)}" class="text-neutral-500 text-center py-16">
+                <p class="mb-2">No listings yet.</p>
+                <p>Be the first to
+                    <a th:href="@{/listings/new}" class="text-blue-400 hover:text-blue-300 transition">post one</a>.
+                </p>
+            </div>
+
+            <!-- The feed -->
+            <div class="space-y-4" th:unless="${#lists.isEmpty(listings)}">
+                <article th:each="l : ${listings}"
+                    class="bg-neutral-900 border border-neutral-800 hover:border-neutral-700 rounded-xl p-5 transition">
+
+                    <!-- Poster header -->
+                    <a th:href="@{'/profile/' + ${l.user.id}}" class="flex items-center gap-3 mb-3 group w-fit">
+                        <img th:if="${posterAvatars[l.id] != null}" th:src="${posterAvatars[l.id]}"
+                            class="w-10 h-10 rounded-full object-cover border border-neutral-800" alt="poster avatar" />
+                        <div th:unless="${posterAvatars[l.id] != null}"
+                            class="w-10 h-10 rounded-full bg-neutral-800 border border-neutral-800 flex items-center justify-center text-xs text-neutral-500">
+                            ?
+                        </div>
+                        <div>
+                            <div class="font-medium group-hover:text-neutral-300 transition"
+                                th:text="${posterNames[l.id]}">
+                                Display name</div>
+                            <div class="text-xs text-neutral-500"
+                                th:text="${T(co.sponto.musicrew.util.RelativeTime).format(l.createdAt)}">2h</div>
+                        </div>
+                    </a>
+
+                    <!-- Title + description preview -->
+                    <a th:href="@{'/listings/' + ${l.id}}" class="block">
+                        <h2 class="text-xl font-semibold mb-2 hover:text-neutral-300 transition" th:text="${l.title}">
+                            Title
+                        </h2>
+                        <p class="text-neutral-300 mb-4 leading-relaxed line-clamp-3" th:text="${l.description}">
+                            Description
+                            preview...</p>
+                    </a>
+
+                    <!-- Tags + location row -->
+                    <div class="flex flex-wrap items-center gap-2 text-sm">
+                        <span th:each="i : ${l.instrumentsNeeded}"
+                            class="px-2.5 py-0.5 rounded-full bg-neutral-950 border border-neutral-800 text-neutral-300"
+                            th:text="${i.name}"></span>
+                        <span th:each="g : ${l.genres}"
+                            class="px-2.5 py-0.5 rounded-full bg-neutral-950 border border-neutral-800 text-neutral-500"
+                            th:text="${g.name}"></span>
+                        <span class="text-neutral-500 ml-auto" th:if="${l.city != null and l.country != null}"
+                            th:text="${l.city + ', ' + l.country}"></span>
+                        <span class="text-neutral-500 ml-auto" th:if="${l.city == null and l.country != null}"
+                            th:text="${l.country}"></span>
+                    </div>
+                </article>
+            </div>
+        </section>
 </body>
 
 </html>

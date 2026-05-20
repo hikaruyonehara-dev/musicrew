@@ -3,7 +3,14 @@
 
 <body>
     <section>
+
+        <!-- Fixed background — empty stadium from the stage, moody arena vibe -->
+        <img src="/images/stadium-bg.jpg" alt="" class="fixed inset-0 w-full h-full object-cover -z-10"
+            style="object-position: center;" />
+        <div class="fixed inset-0 -z-10 bg-neutral-950/65"></div>
+
         <h1 class="text-3xl font-semibold tracking-tight mb-6">Messages</h1>
+
 
         <div th:if="${#lists.isEmpty(conversations)}" class="text-neutral-500 text-center py-12">
             You have no conversations yet.

@@ -3,7 +3,14 @@
 
 <body>
     <section>
+
+        <!-- Fixed background — guitarist photo with a uniform dark veil -->
+        <img src="/images/search-bg.jpg" alt="" class="fixed inset-0 w-full h-full object-cover -z-10"
+            style="object-position: center;" />
+        <div class="fixed inset-0 -z-10 bg-neutral-950/80"></div>
+
         <h1 class="text-3xl font-semibold tracking-tight mb-6">Find musicians</h1>
+
 
         <form method="get" th:action="@{/search}" class="bg-neutral-900 border border-neutral-800 rounded-xl p-6 mb-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
