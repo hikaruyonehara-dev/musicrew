@@ -92,13 +92,6 @@
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
-
-        <!-- AWS SDK for S3 — used in prod for profile pic uploads -->
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>s3</artifactId>
-            <version>2.28.27</version>
-        </dependency>
     </dependencies>
 
     <build>

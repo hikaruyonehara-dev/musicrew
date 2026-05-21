@@ -27,7 +27,7 @@
 | スタイリング | Tailwind CSS (Play CDN)、Inter フォント、Resend 風ダークテーマ |
 | ビルド | Maven、`spring-boot-maven-plugin` による fat-JAR |
 | 画像処理 | Thumbnailator (サーバーサイドで 1024×1024 にリサイズ) |
-| ファイルストレージ | ローカルディスク (`LocalDiskFileStorageService`)、S3 対応 (`S3FileStorageService` / AWS SDK v2) |
+| ファイルストレージ | ローカルディスク (`LocalDiskFileStorageService`) |
 | テスト | JUnit 5、AssertJ、MockMvc、`@DataJpaTest`、`spring-security-test` |
 | CI / CD | GitHub Actions — `main` へのプッシュでビルド + scp + `systemctl restart` |
 | デプロイ | EC2 (Ubuntu 24.04) + `systemd` サービス |
@@ -101,7 +101,7 @@ co.sponto.musicrew
 ├── profile         — Profile、Instrument、Genre、VideoLink、MusicLink
 ├── report          — Report エンティティ、理由・ステータス列挙型、コントローラー
 ├── search          — SearchService + ProfileSpecs (合成可能な JPA Specifications)
-├── upload          — FileStorageService (ローカル + S3 実装)
+├── upload          — FileStorageService (ローカルディスク実装)
 └── user            — User、AppUserDetailsService、AuthController、Role 列挙型
 ```
 
@@ -137,7 +137,7 @@ mvn spring-boot:run
 2. SSH 経由で EC2 インスタンスへ SCP (`secrets.EC2_SSH_KEY`、`EC2_USER`、`EC2_HOST` を使用)
 3. EC2 上で `musicrew` systemd サービスを再起動
 
-本番では `prod` Spring プロファイル (`application-prod.properties`) を使用し、PostgreSQL と S3 互換ストレージを使います。アクティブプロファイルに応じて実装を切り替えるパターンは `S3FileStorageService` を参照。
+本番では `prod` Spring プロファイル (`application-prod.properties`) を使用し、PostgreSQL とローカルディスクストレージを使います (現状、prod プロファイルは未アクティブ — 移行は今後の作業)。
 
 ---
 
@@ -159,7 +159,7 @@ Built from a formal Requirements → Design → Implementation → Test → Depl
 | Styling | Tailwind CSS via Play CDN, Inter font, Resend-style dark theme |
 | Build | Maven, fat-JAR via `spring-boot-maven-plugin` |
 | Image processing | Thumbnailator (server-side resize to 1024×1024) |
-| File storage | Local disk (`LocalDiskFileStorageService`), S3-ready (`S3FileStorageService` via AWS SDK v2) |
+| File storage | Local disk (`LocalDiskFileStorageService`) |
 | Testing | JUnit 5, AssertJ, MockMvc, `@DataJpaTest`, `spring-security-test` |
 | CI / CD | GitHub Actions — build + scp + `systemctl restart` on push to `main` |
 | Deployment | EC2 (Ubuntu 24.04) + `systemd` service |
@@ -233,7 +233,7 @@ co.sponto.musicrew
 ├── profile         — Profile, Instrument, Genre, VideoLink, MusicLink
 ├── report          — Report entity, reason / status enums, controller
 ├── search          — SearchService + ProfileSpecs (composable JPA Specifications)
-├── upload          — FileStorageService (local + S3 implementations)
+├── upload          — FileStorageService (local-disk implementation)
 └── user            — User, AppUserDetailsService, AuthController, Role enum
 ```
 
@@ -269,7 +269,7 @@ To wipe local data: `rm -rf data/` and restart.
 2. SCPs it to the EC2 instance over SSH (uses `secrets.EC2_SSH_KEY`, `EC2_USER`, `EC2_HOST`)
 3. Restarts the `musicrew` `systemd` service on the box
 
-Production uses the `prod` Spring profile (`application-prod.properties`), backed by PostgreSQL and S3-compatible storage. See `S3FileStorageService` for the storage-abstraction pattern that swaps implementations based on the active profile.
+Production uses the `prod` Spring profile (`application-prod.properties`), backed by PostgreSQL and local-disk storage (the `prod` profile is not yet active — migration is on the roadmap).
 
 ---
 

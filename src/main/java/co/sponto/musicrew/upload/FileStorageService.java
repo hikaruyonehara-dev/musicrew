@@ -4,8 +4,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Storage abstraction for profile pictures.
- * Implementations: LocalDiskFileStorageService (dev), S3FileStorageService (prod).
- * Spring picks one based on the active profile.
+ * Current implementation: LocalDiskFileStorageService.
  */
 public interface FileStorageService {
 

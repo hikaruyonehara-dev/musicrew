@@ -2,7 +2,6 @@ package co.sponto.musicrew.upload;
 
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,10 +13,9 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * Local disk implementation. Used in dev and any non-prod profile.
+ * Local disk implementation. Used in all environments.
  */
 @Service
-@Profile("!prod")
 public class LocalDiskFileStorageService implements FileStorageService {
 
     private static final Set<String> ALLOWED_TYPES =
