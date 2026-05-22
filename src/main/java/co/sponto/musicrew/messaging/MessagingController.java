@@ -45,7 +45,7 @@ public class MessagingController {
         List<Conversation> conversations = messagingService.inbox(me);
 
         Map<Long, Long> unreadCounts = new HashMap<>();
-        Map<Long, String> displayNames = new HashMap<>();
+        Map<Long, Profile> otherProfiles = new HashMap<>();
         Map<Long, Instant> lastTimes = new HashMap<>();
 
         for (Conversation c : conversations) {
@@ -53,7 +53,7 @@ public class MessagingController {
             Profile otherProfile = profileService.getByUserId(other.getId());
 
             unreadCounts.put(c.getId(), messagingService.unreadCount(c.getId(), me));
-            displayNames.put(c.getId(), otherProfile.getDisplayName());
+            otherProfiles.put(c.getId(), otherProfile);
 
             Instant lastTime = messageRepository
                     .findFirstByConversationIdOrderBySentAtDesc(c.getId())
@@ -65,7 +65,7 @@ public class MessagingController {
         model.addAttribute("me", me);
         model.addAttribute("conversations", conversations);
         model.addAttribute("unreadCounts", unreadCounts);
-        model.addAttribute("displayNames", displayNames);
+        model.addAttribute("otherProfiles", otherProfiles);
         model.addAttribute("lastTimes", lastTimes);
         return "messaging/inbox";
     }

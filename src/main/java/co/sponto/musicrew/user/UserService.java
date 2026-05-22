@@ -60,4 +60,9 @@ public class UserService {
         }
     }
 
+    @org.springframework.transaction.annotation.Transactional
+    public void touchLastSeen(String email) {
+        userRepository.findByEmail(email.toLowerCase()).ifPresent(user -> user.setLastSeenAt(java.time.Instant.now()));
+    }
+
 }

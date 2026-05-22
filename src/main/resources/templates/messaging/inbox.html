@@ -21,9 +21,23 @@
         <ul class="space-y-2" th:unless="${#lists.isEmpty(conversations)}">
             <li th:each="c : ${conversations}">
                 <a th:href="@{'/messages/' + ${c.id}}"
-                    class="flex items-center justify-between bg-neutral-900 border border-neutral-800 hover:border-neutral-700 rounded-xl p-4 transition">
+                    class="flex items-center justify-between bg-neutral-900 border border-neutral-800 hover:border-neutral-700 rounded-xl p-4 transition gap-3">
+
+                    <!-- Avatar with online indicator -->
+                    <div class="relative shrink-0">
+                        <img th:if="${otherProfiles[c.id].profilePicPath != null}"
+                            th:src="${otherProfiles[c.id].profilePicPath}" alt=""
+                            class="w-10 h-10 rounded-full object-cover border border-neutral-800" />
+                        <div th:unless="${otherProfiles[c.id].profilePicPath != null}"
+                            class="w-10 h-10 rounded-full bg-neutral-800 border border-neutral-800 flex items-center justify-center text-xs text-neutral-500">
+                            ?
+                        </div>
+                        <span th:classappend="${otherProfiles[c.id].user.online ? 'bg-emerald-500' : 'bg-neutral-600'}"
+                            class="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-neutral-950"></span>
+                    </div>
+
                     <div class="flex-1 min-w-0">
-                        <div class="font-medium" th:text="${displayNames[c.id]}">Display name</div>
+                        <div class="font-medium" th:text="${otherProfiles[c.id].displayName}">Display name</div>
                         <div class="text-sm text-neutral-500"
                             th:text="${T(co.sponto.musicrew.util.RelativeTime).format(lastTimes[c.id])}">
                             2h
@@ -34,6 +48,7 @@
                         th:text="${unreadCounts[c.id]}"></span>
                 </a>
             </li>
+
         </ul>
     </section>
 </body>

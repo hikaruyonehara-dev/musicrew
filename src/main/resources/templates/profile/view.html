@@ -8,13 +8,21 @@
 
             <!-- Profile picture column -->
             <div class="md:col-span-1">
-                <img th:if="${profile.profilePicPath != null}" th:src="${profile.profilePicPath}" alt="profile picture"
-                    class="w-full aspect-square object-cover rounded-2xl border border-neutral-800" />
-                <div th:unless="${profile.profilePicPath != null}"
-                    class="w-full aspect-square bg-neutral-900 border border-neutral-800 rounded-2xl flex items-center justify-center text-neutral-500">
-                    no photo
+                <div class="relative">
+                    <img th:if="${profile.profilePicPath != null}" th:src="${profile.profilePicPath}"
+                        alt="profile picture"
+                        class="w-full aspect-square object-cover rounded-2xl border border-neutral-800" />
+                    <div th:unless="${profile.profilePicPath != null}"
+                        class="w-full aspect-square bg-neutral-900 border border-neutral-800 rounded-2xl flex items-center justify-center text-neutral-500">
+                        no photo
+                    </div>
+                    <!-- Online/offline indicator -->
+                    <span th:classappend="${profile.user.online ? 'bg-emerald-500' : 'bg-neutral-600'}"
+                        class="absolute bottom-3 right-3 w-5 h-5 rounded-full border-2 border-neutral-950"
+                        th:title="${profile.user.online ? 'Online' : (profile.user.lastSeenAt != null ? 'Last seen ' + T(co.sponto.musicrew.util.RelativeTime).format(profile.user.lastSeenAt) : 'Offline')}"></span>
                 </div>
             </div>
+
 
             <!-- Details column -->
             <div class="md:col-span-2">
@@ -35,6 +43,13 @@
                         th:text="${profile.city + ', ' + profile.country}"></span>
                     <span class="text-neutral-400" th:if="${profile.city == null and profile.country != null}"
                         th:text="${profile.country}"></span>
+
+                    <!-- Last seen / online text -->
+                    <span th:if="${profile.user.online}" class="text-emerald-400 text-sm">● Online</span>
+                    <span th:if="${!profile.user.online and profile.user.lastSeenAt != null}"
+                        class="text-neutral-500 text-sm"
+                        th:text="'Last seen ' + ${T(co.sponto.musicrew.util.RelativeTime).format(profile.user.lastSeenAt)}"></span>
+
                 </div>
 
                 <p class="text-neutral-300 mb-6 leading-relaxed" th:if="${profile.bio != null}"

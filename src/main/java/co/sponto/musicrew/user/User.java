@@ -37,6 +37,9 @@ public class User {
     private boolean enabled = true;
 
     @Setter
+    private Instant lastSeenAt;
+
+    @Setter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     @org.hibernate.annotations.ColumnDefault("'USER'")
@@ -47,5 +50,15 @@ public class User {
         this.passwordHash = passwordHash;
         this.dateOfBirth = dateOfBirth;
         this.createdAt = Instant.now();
+    }
+
+    private static final long ONLINE_WINDOW_MINUTES = 5;
+
+    public boolean isOnline() {
+        if (lastSeenAt == null) {
+            return false;
+        }
+        return java.time.Duration.between(lastSeenAt, java.time.Instant.now())
+                .toMinutes() < ONLINE_WINDOW_MINUTES;
     }
 }

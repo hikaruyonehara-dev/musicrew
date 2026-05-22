@@ -49,6 +49,7 @@
 - 演奏動画リンクを複数登録 (YouTube / Vimeo / SoundCloud のホワイトリスト)
 - 音楽配信リンクを複数登録 (TuneCore / DistroKid / CDBaby / UnitedMasters)
 - 画像 + 演奏動画 1 本以上を登録するまで検索結果に表示されない
+- **オンライン状態** — 過去 5 分以内にアクセスがあれば緑のドット + "● Online"、それ以外は "Last seen 2h ago" を表示。プロフィール、受信箱、会話画面のアバター上に表示
 
 #### バンド募集 (ホームフィード)
 - `/home` に Instagram 風のアクティブな募集フィード
@@ -181,6 +182,7 @@ Built from a formal Requirements → Design → Implementation → Test → Depl
 - Multiple performance video links (YouTube / Vimeo / SoundCloud whitelist)
 - Multiple music distribution links (TuneCore / DistroKid / CDBaby / UnitedMasters)
 - Hidden from public discovery until profile has picture + ≥ 1 performance video
+- **Online presence** — green dot + "● Online" label when active in the last 5 min; "Last seen 2h ago" otherwise. Shown on the profile page, inbox rows, and conversation headers. Powered by a Spring `HandlerInterceptor` that updates `lastSeenAt` on every authenticated request
 
 #### Listings (home feed)
 - Instagram-style feed of active band-searches at `/home`
