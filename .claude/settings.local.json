@@ -1,8 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(rm -f project_musicrew.md project_requirements.md project_phases_roadmap.md project_delivery_strategy.md project_learning_goal.md user_role.md feedback_ask_questions.md feedback_prefer_defaults.md)",
-      "Bash(echo \"\")"
-    ]
-  }
-}
