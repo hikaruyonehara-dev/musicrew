@@ -3,8 +3,8 @@
 > 音楽仲間を見つけるためのウェブアプリ
 > A web app for musicians to find bandmates — built end-to-end as a solo SDLC exercise.
 
-**デモ / Demo:** `http://54.250.174.66:8080`
-**ユーザー / User:** `test1@test.com`
+**デモ / Demo:** [`https://musicrew.duckdns.org`](https://musicrew.duckdns.org)
+**ユーザー / User:** `aki@musicrew.test`
 **パスワード / Password:** `Password`
 
 ---
@@ -30,7 +30,7 @@
 | ファイルストレージ | ローカルディスク (`LocalDiskFileStorageService`) |
 | テスト | JUnit 5、AssertJ、MockMvc、`@DataJpaTest`、`spring-security-test` |
 | CI / CD | GitHub Actions — `main` へのプッシュでビルド + scp + `systemctl restart` |
-| デプロイ | EC2 (Ubuntu 24.04) + `systemd` サービス |
+| デプロイ | EC2 (Ubuntu 24.04) + `systemd` + nginx リバースプロキシ + Let's Encrypt HTTPS |
 
 ### 機能
 
@@ -138,7 +138,9 @@ mvn spring-boot:run
 2. SSH 経由で EC2 インスタンスへ SCP (`secrets.EC2_SSH_KEY`、`EC2_USER`、`EC2_HOST` を使用)
 3. EC2 上で `musicrew` systemd サービスを再起動
 
-本番では `prod` Spring プロファイル (`application-prod.properties`) を使用し、PostgreSQL とローカルディスクストレージを使います (現状、prod プロファイルは未アクティブ — 移行は今後の作業)。
+本番では `prod` Spring プロファイル (`application-prod.properties`) が有効化されており、**EC2 上で自己ホスト** の PostgreSQL (`localhost:5432`) とローカルディスクストレージを使用。秘匿値 (DB パスワードなど) は systemd の `EnvironmentFile=/etc/musicrew/env` 経由で注入されます。
+
+ライブ URL: [`https://musicrew.duckdns.org/`](https://musicrew.duckdns.org/)。**nginx** がリバースプロキシとして 443 番ポートで受けて Spring Boot (`localhost:8080`) に転送、**Let's Encrypt** の TLS 証明書を **certbot** で取得し、systemd タイマーで自動更新します。
 
 ---
 
@@ -163,7 +165,7 @@ Built from a formal Requirements → Design → Implementation → Test → Depl
 | File storage | Local disk (`LocalDiskFileStorageService`) |
 | Testing | JUnit 5, AssertJ, MockMvc, `@DataJpaTest`, `spring-security-test` |
 | CI / CD | GitHub Actions — build + scp + `systemctl restart` on push to `main` |
-| Deployment | EC2 (Ubuntu 24.04) + `systemd` service |
+| Deployment | EC2 (Ubuntu 24.04) + `systemd` + nginx reverse proxy + Let's Encrypt HTTPS |
 
 ### Features
 
@@ -271,7 +273,17 @@ To wipe local data: `rm -rf data/` and restart.
 2. SCPs it to the EC2 instance over SSH (uses `secrets.EC2_SSH_KEY`, `EC2_USER`, `EC2_HOST`)
 3. Restarts the `musicrew` `systemd` service on the box
 
-Production uses the `prod` Spring profile (`application-prod.properties`), backed by PostgreSQL and local-disk storage (the `prod` profile is not yet active — migration is on the roadmap).
+Production runs with the `prod` Spring profile (`application-prod.properties`) active, backed by **self-hosted PostgreSQL** on the same EC2 (`localhost:5432`) and local-disk storage. Secrets (DB password, etc.) are injected via the systemd `EnvironmentFile=/etc/musicrew/env` (root-owned, mode 600).
+
+Live at [`https://musicrew.duckdns.org/`](https://musicrew.duckdns.org/). **nginx** sits in front as a reverse proxy on port 443, forwarding to Spring Boot at `localhost:8080`. **Let's Encrypt** TLS certificates issued via **certbot**, auto-renewed by the certbot `systemd` timer.
+
+---
+
+## Built with / 使用ツール
+
+Built with assistance from **[Claude Code](https://claude.com/claude-code)** — used throughout development for pair-programming, code review, and architectural guidance.
+
+開発全体を通して **[Claude Code](https://claude.com/claude-code)** をペアプログラミング・コードレビュー・設計相談のツールとして使用しています。
 
 ---
 
