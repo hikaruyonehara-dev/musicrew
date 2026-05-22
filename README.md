@@ -7,6 +7,9 @@
 **ユーザー / User:** `aki@musicrew.test`
 **パスワード / Password:** `Password`
 
+> **Built with [Claude Code](https://claude.com/claude-code)** — used as a pair-programming partner throughout development (planning, coding, reviewing, debugging).
+> **[Claude Code](https://claude.com/claude-code) をペアプログラミングパートナーとして開発全体で使用** (設計・実装・レビュー・デバッグ)。
+
 ---
 
 ## 日本語
