@@ -145,6 +145,11 @@ mvn spring-boot:run
 
 ライブ URL: [`https://musicrew.duckdns.org/`](https://musicrew.duckdns.org/)。**nginx** がリバースプロキシとして 443 番ポートで受けて Spring Boot (`localhost:8080`) に転送、**Let's Encrypt** の TLS 証明書を **certbot** で取得し、systemd タイマーで自動更新します。
 
+### 運用
+
+- **データベースバックアップ:** 毎日 03:00 に Postgres を自動ダンプ (`pg_dump`) し、gzip 圧縮で `/var/backups/musicrew/` に保存。7 日間のローテーションで古いダンプを自動削除。cron (`/etc/cron.d/musicrew-backup`) で実行。
+- **稼働監視:** UptimeRobot が `https://musicrew.duckdns.org/` を 5 分ごとにヘルスチェック。ダウン時はメールで即時通知。
+
 ---
 
 ## English
@@ -279,6 +284,11 @@ To wipe local data: `rm -rf data/` and restart.
 Production runs with the `prod` Spring profile (`application-prod.properties`) active, backed by **self-hosted PostgreSQL** on the same EC2 (`localhost:5432`) and local-disk storage. Secrets (DB password, etc.) are injected via the systemd `EnvironmentFile=/etc/musicrew/env` (root-owned, mode 600).
 
 Live at [`https://musicrew.duckdns.org/`](https://musicrew.duckdns.org/). **nginx** sits in front as a reverse proxy on port 443, forwarding to Spring Boot at `localhost:8080`. **Let's Encrypt** TLS certificates issued via **certbot**, auto-renewed by the certbot `systemd` timer.
+
+### Operations
+
+- **Database backups:** automated daily `pg_dump` at 03:00, gzip-compressed to `/var/backups/musicrew/`, 7-day rolling retention. Wired via `cron` (`/etc/cron.d/musicrew-backup`).
+- **Uptime monitoring:** UptimeRobot polls `https://musicrew.duckdns.org/` every 5 minutes; downtime triggers an email alert.
 
 ---
 
