@@ -149,6 +149,9 @@ mvn spring-boot:run
 
 - **データベースバックアップ:** 毎日 03:00 に Postgres を自動ダンプ (`pg_dump`) し、gzip 圧縮で `/var/backups/musicrew/` に保存。7 日間のローテーションで古いダンプを自動削除。cron (`/etc/cron.d/musicrew-backup`) で実行。
 - **稼働監視:** UptimeRobot が `https://musicrew.duckdns.org/` を 5 分ごとにヘルスチェック。ダウン時はメールで即時通知。
+- **依存パッケージ更新:** GitHub Dependabot が毎週月曜に `pom.xml` と GitHub Actions を CVE データベースに照らしてスキャン、脆弱性が見つかれば自動で PR を作成。OS 側は `unattended-upgrades` が毎晩セキュリティパッチを自動適用、カーネル更新時は 04:00 に自動再起動。
+- **ディスク監視:** 1 時間毎に cron スクリプトが `/` の使用量を `/var/log/musicrew-disk.log` に記録。80% を超えると `WARN` 行が出るので手動確認。
+- **障害対応:** [`RUNBOOK.md`](RUNBOOK.md) に 10 種類の代表的な故障モード (502・接続不可・DB 認証失敗・HTTPS 失効・ディスク満杯・バックアップ復元など) と対処コマンドを記載。
 
 ---
 
@@ -289,6 +292,9 @@ Live at [`https://musicrew.duckdns.org/`](https://musicrew.duckdns.org/). **ngin
 
 - **Database backups:** automated daily `pg_dump` at 03:00, gzip-compressed to `/var/backups/musicrew/`, 7-day rolling retention. Wired via `cron` (`/etc/cron.d/musicrew-backup`).
 - **Uptime monitoring:** UptimeRobot polls `https://musicrew.duckdns.org/` every 5 minutes; downtime triggers an email alert.
+- **Dependency patching:** GitHub Dependabot scans `pom.xml` and the deploy workflow every Monday against the CVE database and auto-opens PRs for vulnerable versions. On the OS side, `unattended-upgrades` installs security patches nightly with auto-reboot at 04:00 for kernel-level updates.
+- **Disk monitoring:** hourly cron script writes root-volume usage to `/var/log/musicrew-disk.log`; a `WARN` line is logged whenever usage crosses 80%.
+- **Failure response:** [`RUNBOOK.md`](RUNBOOK.md) documents 10 common failure modes (502s, connection refused, DB auth failures, expired TLS, disk full, backup restore, etc.) with copy-pasteable diagnosis + fix commands.
 
 ---
 
