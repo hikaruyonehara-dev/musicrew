@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import co.sponto.musicrew.block.BlockService;
+import co.sponto.musicrew.favorite.FavoriteService;
 import co.sponto.musicrew.user.User;
 import co.sponto.musicrew.user.UserService;
 import jakarta.servlet.ServletException;
@@ -27,11 +28,14 @@ public class ProfileController {
     private final ProfileService profileService;
     private final UserService userService;
     private final BlockService blockService;
+    private final FavoriteService favoriteService;
 
-    public ProfileController(ProfileService profileService, UserService userService, BlockService blockService) {
+    public ProfileController(ProfileService profileService, UserService userService,
+            BlockService blockService, FavoriteService favoriteService) {
         this.profileService = profileService;
         this.userService = userService;
         this.blockService = blockService;
+        this.favoriteService = favoriteService;
     }
 
     @GetMapping("/profile/me")
@@ -48,9 +52,9 @@ public class ProfileController {
         Profile profile = profileService.getById(id);
         Profile me = profileService.getByUserEmail(principal.getUsername());
         boolean isSelf = profile.getId().equals(me.getId());
-
         boolean blocked = !isSelf && blockService.isBlockedBetween(
                 me.getUser().getId(), profile.getUser().getId());
+        boolean isFavorited = !isSelf && favoriteService.isFavorited(me.getUser(), profile.getUser().getId());
 
         if (!isSelf && (blocked || profile.isHidden() || !profile.getUser().isEnabled())) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -58,6 +62,7 @@ public class ProfileController {
 
         model.addAttribute("profile", profile);
         model.addAttribute("isSelf", isSelf);
+        model.addAttribute("isFavorited", isFavorited);
         return "profile/view";
     }
 

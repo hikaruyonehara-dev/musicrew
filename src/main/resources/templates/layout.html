@@ -52,7 +52,11 @@
                     <a class="text-neutral-400 hover:text-white transition" th:href="@{/search}">Search</a>
                 </li>
                 <li sec:authorize="isAuthenticated()">
-                    <a class="text-neutral-400 hover:text-white transition" th:href="@{/messages}">Messages</a>
+                    <a class="relative text-neutral-400 hover:text-white transition" th:href="@{/messages}">
+                        Messages
+                        <span th:if="${hasUnread}"
+                            class="absolute -top-1 -right-2 w-2 h-2 rounded-full bg-red-500"></span>
+                    </a>
                 </li>
                 <li sec:authorize="isAuthenticated()">
                     <a class="text-neutral-400 hover:text-white transition" th:href="@{/profile/me}">Profile</a>

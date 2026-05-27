@@ -11,11 +11,29 @@
 
         <h1 class="text-3xl font-semibold tracking-tight mb-6">Messages</h1>
 
+        <!-- Filter tabs -->
+        <div class="flex gap-2 mb-6 border-b border-neutral-800">
+            <a th:href="@{/messages}"
+                th:classappend="${activeFilter == 'all'} ? 'border-white text-white' : 'border-transparent text-neutral-400 hover:text-white'"
+                class="px-4 py-2 border-b-2 text-sm transition">
+                All
+            </a>
+            <a th:href="@{/messages(filter='favorites')}"
+                th:classappend="${activeFilter == 'favorites'} ? 'border-white text-white' : 'border-transparent text-neutral-400 hover:text-white'"
+                class="px-4 py-2 border-b-2 text-sm transition">
+                ★ Favorites
+            </a>
+        </div>
 
         <div th:if="${#lists.isEmpty(conversations)}" class="text-neutral-500 text-center py-12">
-            You have no conversations yet.
-            <a th:href="@{/search}" class="text-blue-400 hover:text-blue-300 transition">Find someone</a>
-            to start one.
+            <span th:if="${activeFilter == 'favorites'}">
+                No conversations with favorited users yet. Tap ☆ on a profile to add favorites.
+            </span>
+            <span th:unless="${activeFilter == 'favorites'}">
+                You have no conversations yet.
+                <a th:href="@{/search}" class="text-blue-400 hover:text-blue-300 transition">Find someone</a>
+                to start one.
+            </span>
         </div>
 
         <ul class="space-y-2" th:unless="${#lists.isEmpty(conversations)}">

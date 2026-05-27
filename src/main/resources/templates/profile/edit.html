@@ -157,6 +157,22 @@
 
         <!-- Account management -->
 
+        <!-- Favorited users link -->
+        <div class="py-4 border-b border-neutral-800">
+            <div class="flex items-center justify-between">
+                <div>
+                    <div class="font-medium">Favorited users</div>
+                    <p class="text-sm text-neutral-400 mt-1">
+                        See the users you've bookmarked for easy access.
+                    </p>
+                </div>
+                <a th:href="@{/profile/me/favorites}"
+                    class="text-sm text-neutral-400 hover:text-white border border-neutral-700 px-3 py-1.5 rounded-full transition">
+                    Manage
+                </a>
+            </div>
+        </div>
+
         <!-- Blocked users link -->
         <div class="py-4 border-b border-neutral-800">
             <div class="flex items-center justify-between">

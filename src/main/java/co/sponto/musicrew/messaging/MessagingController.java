@@ -1,6 +1,7 @@
 package co.sponto.musicrew.messaging;
 
 import co.sponto.musicrew.block.BlockService;
+import co.sponto.musicrew.favorite.FavoriteService;
 import co.sponto.musicrew.profile.Profile;
 import co.sponto.musicrew.profile.ProfileService;
 import co.sponto.musicrew.user.User;
@@ -16,6 +17,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/messages")
@@ -26,27 +28,38 @@ public class MessagingController {
     private final ProfileService profileService;
     private final MessageRepository messageRepository;
     private final BlockService blockService;
+    private final FavoriteService favoriteService;
 
     public MessagingController(MessagingService messagingService,
             UserService userService,
             ProfileService profileService,
             MessageRepository messageRepository,
-            BlockService blockService) {
+            BlockService blockService,
+            FavoriteService favoriteService) {
         this.messagingService = messagingService;
         this.userService = userService;
         this.profileService = profileService;
         this.messageRepository = messageRepository;
         this.blockService = blockService;
+        this.favoriteService = favoriteService;
     }
 
     @GetMapping
-    public String inbox(@AuthenticationPrincipal UserDetails principal, Model model) {
+    public String inbox(@AuthenticationPrincipal UserDetails principal, Model model,
+            @RequestParam(required = false) String filter) {
         User me = userService.getByEmail(principal.getUsername());
         List<Conversation> conversations = messagingService.inbox(me);
 
         Map<Long, Long> unreadCounts = new HashMap<>();
         Map<Long, Profile> otherProfiles = new HashMap<>();
         Map<Long, Instant> lastTimes = new HashMap<>();
+
+        if ("favorites".equals(filter)) {
+            Set<Long> favoritedIds = favoriteService.favoritedUserIds(me);
+            conversations = conversations.stream()
+                    .filter(c -> favoritedIds.contains(c.otherParticipant(me).getId()))
+                    .toList();
+        }
 
         for (Conversation c : conversations) {
             User other = c.otherParticipant(me);
@@ -67,6 +80,7 @@ public class MessagingController {
         model.addAttribute("unreadCounts", unreadCounts);
         model.addAttribute("otherProfiles", otherProfiles);
         model.addAttribute("lastTimes", lastTimes);
+        model.addAttribute("activeFilter", filter == null ? "all" : filter);
         return "messaging/inbox";
     }
 

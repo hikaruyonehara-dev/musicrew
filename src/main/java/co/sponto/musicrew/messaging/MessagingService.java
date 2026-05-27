@@ -97,4 +97,9 @@ public class MessagingService {
 
         conversationRepository.delete(c);
     }
+
+    public boolean hasUnread(User me) {
+        return inbox(me).stream()
+                .anyMatch(c -> unreadCount(c.getId(), me) > 0);
+    }
 }
